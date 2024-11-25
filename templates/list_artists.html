@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Artists</title>
+</head>
+<body>
+    <h1>Select Your Favorite Artists</h1>
+    <form method="POST" action="/select_artists">
+        {% for artist in artists %}
+            <div>
+                <input type="checkbox" id="{{ artist.id }}" name="artists" value="{{ artist.id }}">
+                <label for="{{ artist.id }}">{{ artist.name }}</label>
+            </div>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
