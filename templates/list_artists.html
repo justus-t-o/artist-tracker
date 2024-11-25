@@ -4,16 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Artists</title>
+    <script>
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const selectAllButton = document.getElementById('select-all-btn');
+            const allSelected = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+            checkboxes.forEach(checkbox => checkbox.checked = !allSelected);
+
+            selectAllButton.textContent = allSelected ? 'Select All' : 'Deselect All';
+        }
+    </script>
 </head>
 <body>
     <h1>Select Your Favorite Artists</h1>
+    <button id="select-all-btn" type="button" onclick="toggleSelectAll()">Select All</button>
     <form method="POST" action="/select_artists">
-        {% for artist in artists %}
-            <div>
-                <input type="checkbox" id="{{ artist.id }}" name="artists" value="{{ artist.id }}">
-                <label for="{{ artist.id }}">{{ artist.name }}</label>
-            </div>
-        {% endfor %}
+        <div>
+            {% for artist in artists %}
+                <div>
+                    <input type="checkbox" id="{{ artist.id }}" name="artists" value="{{ artist.id }}">
+                    <label for="{{ artist.id }}">{{ artist.name }}</label>
+                </div>
+            {% endfor %}
+        </div>
         <button type="submit">Submit</button>
     </form>
 </body>
