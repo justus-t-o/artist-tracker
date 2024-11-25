@@ -19,10 +19,7 @@ SCOPES = "user-follow-read user-read-private user-read-email"
 
 @app.route("/")
 def home():
-    return '''
-    <h1>Spotify API Key Generator</h1>
-    <a href="/login">Log in with Spotify</a>
-    '''
+    return render_template("landing_page.html")
 
 @app.route("/login")
 def login():

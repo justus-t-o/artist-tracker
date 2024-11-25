@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Spotify Integration</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1db954, #191414);
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #1db954;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #c4c4c4;
+        }
+
+        a {
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            padding: 15px 30px;
+            background: #1db954;
+            border-radius: 50px;
+            display: inline-block;
+            transition: all 0.3s ease-in-out;
+        }
+
+        a:hover {
+            background: #148c3b;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .footer a {
+            color: #1db954;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Artist Release Tracker</h1>
+        <p>Log in with your Spotify account to explore your favorite artists, find their latest releases, and more. Start your musical journey now!</p>
+        <a href="/login">Log in with Spotify</a>
+        <div class="footer">
+            <p>Powered by <a href="https://developer.spotify.com/" target="_blank">Spotify API</a></p>
+        </div>
+    </div>
+</body>
+</html>
