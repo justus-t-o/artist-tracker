@@ -15,15 +15,8 @@ Before running the application, ensure you have the following installed on your 
 
 ## Setup Instructions
 
-### 1. Clone the Repository
-Clone the repository to your local machine using:
 
-```bash
-git clone <repository_url>
-cd <repository_name>
-```
-
-### 2. Create a Virtual Environment
+### 1. Create a Virtual Environment
 Set up a Python virtual environment to isolate dependencies:
 
 ```bash
@@ -34,14 +27,14 @@ Activate the virtual environment:
 - **Windows**: `venv\Scripts\activate`
 - **Mac/Linux**: `source venv/bin/activate`
 
-### 3. Install Dependencies
+### 2. Install Dependencies
 Install the required Python packages using `pip`:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Set Environment Variables
+### 3. Set Environment Variables
 The application requires Spotify API credentials. Set the following environment variables in your system:
 
 - **CLIENT_ID**: Your Spotify application's Client ID.
@@ -69,7 +62,7 @@ Make sure to install `python-dotenv` if you choose this method:
 pip install python-dotenv
 ```
 
-### 5. Run the Application
+### 4. Run the Application
 Start the Flask development server:
 
 ```bash
