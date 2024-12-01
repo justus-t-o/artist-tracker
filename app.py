@@ -1,4 +1,6 @@
 from flask import Flask, request, redirect, session, url_for, jsonify, render_template
+from concurrent.futures import ThreadPoolExecutor
+from helpers import all_helpers
 import requests
 import os
 from datetime import datetime, timedelta
@@ -75,8 +77,14 @@ def list_artists():
 @app.route("/select_artists", methods=["POST"])
 def select_artists():
     selected_artists = request.form.getlist("artists")
-    session["selected_artists"] = selected_artists  # Store artist IDs in session
+    session["selected_artists"] = selected_artists  
     return redirect(url_for("latest_releases"))
+
+
+def fetch_albums(artist_id, headers):
+    url = SPOTIFY_ARTISTS_ALBUMS_URL.format(artist_id=artist_id)
+    params = {"include_groups": "album,single", "limit": 50, "offset": 0}
+    return all_helpers.paginate_requests(url, headers, params, "items", "next")
 
 @app.route("/latest_releases")
 def latest_releases():
@@ -89,40 +97,36 @@ def latest_releases():
     headers = {"Authorization": f"Bearer {access_token}"}
     releases = []
 
-    # Fetch releases for each selected artist
-    for artist_id in selected_artists:
-        response = requests.get(SPOTIFY_ARTISTS_ALBUMS_URL.format(artist_id=artist_id), headers=headers, params={"include_groups": "album,single", "limit": 50})
-        
-        if response.status_code != 200:
-            return f"Error: {response.json()}", 400
+    with ThreadPoolExecutor() as executor:
+        futures = {executor.submit(fetch_albums, artist_id, headers): artist_id for artist_id in selected_artists}
 
-        albums = response.json()["items"]
+        for future in futures:
+            try:
+                albums = future.result()
+                for album in albums:
+                    release_date = album["release_date"]
+                    release_date_precision = album["release_date_precision"]
 
-        # Filter releases from the last 60 days
-        for album in albums:
-            release_date = album["release_date"]
-            release_date_precision = album["release_date_precision"]
+                    if release_date_precision == "day":
+                        album_date = datetime.strptime(release_date, "%Y-%m-%d")
+                    elif release_date_precision == "month":
+                        album_date = datetime.strptime(release_date, "%Y-%m")
+                    else:
+                        continue
 
-            # Parse release date based on precision
-            if release_date_precision == "day":
-                album_date = datetime.strptime(release_date, "%Y-%m-%d")
-            elif release_date_precision == "month":
-                album_date = datetime.strptime(release_date, "%Y-%m")
-            else:
-                continue
+                    if album_date >= datetime.now() - timedelta(days=60):
+                        releases.append({
+                            "name": album["name"],
+                            "artist": ", ".join([artist["name"] for artist in album["artists"]]),
+                            "type": album["album_type"],
+                            "release_date": release_date,
+                            "id": album["id"],
+                        })
+            except Exception as e:
+                artist_id = futures[future]
+                print(f"Error fetching albums for artist {artist_id}: {e}")
 
-            # Check if the release is within the last 60 days
-            if album_date >= datetime.now() - timedelta(days=60):
-                releases.append({
-                    "name": album["name"],
-                    "artist": ", ".join([artist["name"] for artist in album["artists"]]),
-                    "type": album["album_type"],
-                    "release_date": release_date,
-                    "id": album["id"],
-                })
-
-    # Group by release type and sort by release date (newest first)
-    grouped_releases = {"single": [], "album": [], "compilation": []}
+    grouped_releases = {"single": [], "album": []}
     for release in sorted(releases, key=lambda x: x["release_date"], reverse=True):
         grouped_releases[release["type"]].append(release)
 
