@@ -64,14 +64,9 @@ def list_artists():
         return redirect(url_for("login"))
 
     headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get("https://api.spotify.com/v1/me/following?type=artist&limit=50", headers=headers)
-
-    if response.status_code != 200:
-        return f"Error: {response.json()}", 400
-
-    data = response.json()
-    artists = data["artists"]["items"]
-
+    url = "https://api.spotify.com/v1/me/following?type=artist&limit=50"
+    artists = all_helpers.paginate_requests(url, headers, {}, ["artists","items"], "next")
+    
     return render_template("list_artists.html", artists=artists)
 
 @app.route("/select_artists", methods=["POST"])
@@ -84,7 +79,7 @@ def select_artists():
 def fetch_albums(artist_id, headers):
     url = SPOTIFY_ARTISTS_ALBUMS_URL.format(artist_id=artist_id)
     params = {"include_groups": "album,single", "limit": 50, "offset": 0}
-    return all_helpers.paginate_requests(url, headers, params, "items", "next")
+    return all_helpers.paginate_requests(url, headers, params, ["items"], "next")
 
 @app.route("/latest_releases")
 def latest_releases():
